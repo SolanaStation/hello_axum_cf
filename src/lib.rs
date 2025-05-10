@@ -30,7 +30,7 @@ async fn fetch(
     Ok(router().call(req).await?)
 }
 
-pub async fn root(Query(params): Query<WalletQuery>) -> String {
+pub async fn root(Query(params): Query<WalletQuery>) -> Json<ApiResponse> {
     // format!("Hello Axum! Wallet Address: {}", params.wallet_address)
     let response_data = ApiResponse {
         message: "Hello from Axum on Cloudflare Workers!".to_string(),

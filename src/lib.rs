@@ -1,16 +1,23 @@
 use axum::extract::Query;
-use axum::{routing::get, Router};
-use serde::Deserialize;
+use axum::{routing::get, Json, Router};
+use serde::{Deserialize, Serialize};
 use tower_service::Service;
 use worker::*;
-
-fn router() -> Router {
-    Router::new().route("/", get(root))
-}
 
 #[derive(Deserialize)]
 pub struct WalletQuery {
     wallet_address: String,
+}
+
+#[derive(Serialize)]
+pub struct ApiResponse {
+    message: String,
+    receive_wallet: String,
+    processed_by: String,
+}
+
+fn router() -> Router {
+    Router::new().route("/", get(root))
 }
 
 #[event(fetch)]
@@ -24,5 +31,11 @@ async fn fetch(
 }
 
 pub async fn root(Query(params): Query<WalletQuery>) -> String {
-    format!("Hello Axum! Wallet Address: {}", params.wallet_address)
+    // format!("Hello Axum! Wallet Address: {}", params.wallet_address)
+    let response_data = ApiResponse {
+        message: "Hello from Axum on Cloudflare Workers!".to_string(),
+        receive_wallet: params.wallet_address,
+        processed_by: "Rust Workers".to_string(),
+    };
+    Json(response_data)
 }
